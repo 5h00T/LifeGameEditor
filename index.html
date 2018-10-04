@@ -8,6 +8,22 @@
 </head>
 <body>
     <h1>LifeGameEditer</h1>
+    <form name="form1" action="">
+        <p>一行当たりのセル数</p>
+        <select id="CellNum">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="40">40</option>
+            <option value="50">50</option>
+            <option value="60">60</option>
+            <option value="70">70</option>
+            <option value="80">80</option>
+            <option value="90">90</option>
+            <option value="100">100</option>
+        </select>
+        <input type="button" value="変更" onclick="onCellNumButtonClick();" />
+    </form>
     <a id="download" href="#" download="cell.csv" onclick="gameDownload()">ダウンロード</a>
     <input type="button" value="clear" onclick="onClearButtonClick();"/>
     <canvas id="canvas" width="100" height="100"></canvas>

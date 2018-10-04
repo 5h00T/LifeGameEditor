@@ -69,13 +69,9 @@ function OnMousedown(e) {
   isMouseDown = true;
 }
 
-
-window.onload = function() {
-  
-  LengthPerCell = 20; // セル一つあたりの長さ
-  CellPerLine = 100; // 一行当たりのセル数
-  GridLength = LengthPerCell * CellPerLine;
+function lifeGameInit(){
   // 0埋めの二次元配列を生成
+  delete cell;
   cell = new Array(CellPerLine);
   for(i = 0; i < CellPerLine; i++){
     cell[i] = new Array(CellPerLine).fill(0)
@@ -83,6 +79,7 @@ window.onload = function() {
   
   canvas = document.getElementById("canvas");
   context = canvas.getContext('2d');
+  GridLength = LengthPerCell * CellPerLine;
   
   canvas.addEventListener('mousemove', OnMousemove);
   canvas.addEventListener('mousedown', OnMousedown);
@@ -95,6 +92,14 @@ window.onload = function() {
   
   DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 0.6");
   DrawLine(GridLength, CellPerLine, LengthPerCell);
+}
+
+window.onload = function() {
+  
+  LengthPerCell = 10; // セル一つあたりの長さ
+  CellPerLine = 10; // 一行当たりのセル数
+  
+  lifeGameInit();
 };
 
 
@@ -136,4 +141,14 @@ function cellToCsv(cell){
   }
   
   return csv;
+}
+
+
+function onCellNumButtonClick(){
+  var select = document.getElementById("CellNum");
+  var idx = select.selectedIndex;
+  var value = select.options[idx].value;
+  // console.log(typeof(value));
+  CellPerLine = Number(value);
+  lifeGameInit();
 }
