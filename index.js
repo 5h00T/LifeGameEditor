@@ -47,9 +47,11 @@ function OnMouseup(e) {
 
 
 function OnMousemove(e) {
-  var x = e.clientX - canvas.offsetLeft;
-  var y = e.clientY - canvas.offsetTop;
-  
+  // var x = e.clientX - canvas.offsetLeft;
+  // var y = e.clientY - canvas.offsetTop;
+  var x = e.clientX -  e.target.getBoundingClientRect().left;
+  var y = e.clientY -  e.target.getBoundingClientRect().top;
+
   if (isMouseDown){
       var i = Math.floor(x / LengthPerCell);
       var j = Math.floor(y / LengthPerCell);
@@ -70,8 +72,8 @@ function OnMousedown(e) {
 
 window.onload = function() {
   
-  LengthPerCell = 10; // セル一つあたりの長さ
-  CellPerLine = 40; // 一行当たりのセル数
+  LengthPerCell = 20; // セル一つあたりの長さ
+  CellPerLine = 100; // 一行当たりのセル数
   GridLength = LengthPerCell * CellPerLine;
   // 0埋めの二次元配列を生成
   cell = new Array(CellPerLine);
