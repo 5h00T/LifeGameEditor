@@ -24,13 +24,23 @@
         </select>
         <input type="button" value="変更" onclick="onCellNumButtonClick();" />
     </form>
-    <a id="download" href="#" download="cell.csv" onclick="gameDownload()">ダウンロード</a>
+
     <input type="button" value="clear" onclick="onClearButtonClick();"/>
+    
     <p>ペンの種類</p>
     <input id="AlivePen" name="RadioGroup1" type="radio" onchange="onRadioButtonChange();" checked="true"/>
       <label for="Radio1">生存</label><br/>
     <input id="DeadPen" name="RadioGroup1" type="radio" onchange="onRadioButtonChange();" />
       <label for="Radio2">死滅</label><br />
+    
     <canvas id="canvas" width="100" height="100"></canvas>
+    
+    <p>セルの周りを</p>
+    <input id="EncloseZero" name="RadioGroup2" type="radio" checked="true"/>
+      <label for="Radio1">0で囲む</label><br/>
+    <input id="NotEncloseZero" name="RadioGroup2" type="radio" />
+      <label for="Radio2">囲まない</label><br />
+    
+    <a id="download" href="#" download="cell.csv" onclick="gameDownload();">ダウンロード</a>
 </body>
 </html>

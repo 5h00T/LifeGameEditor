@@ -119,26 +119,53 @@ function onClearButtonClick(){
 }
 
 function gameDownload(){
-  var blob = new Blob([cellToCsv(cell)], { "type" : "text/plain" });
+  var check1 = document.getElementById("EncloseZero");
+  var check2 = document.getElementById("NotEncloseZero");
+  
+  
+  var blob = new Blob([cellToCsv( check1.checked ? encloseZero(cell) : cell)], { "type" : "text/plain" });
 
   if (window.navigator.msSaveBlob) { 
     window.navigator.msSaveBlob(blob, "cell.csv"); 
     // msSaveOrOpenBlobの場合はファイルを保存せずに開ける
-    // window.navigator.msSaveOrOpenBlob(blob, "cell.csv"); 
+    window.navigator.msSaveOrOpenBlob(blob, "cell.csv"); 
   } else {
     document.getElementById("download").href = window.URL.createObjectURL(blob);
   }
+}
+
+function encloseZero(cell){
+  console.log("encloseZero")
+  var new_cell = JSON.parse(JSON.stringify(cell)); // 値を全てコピーする
+  
+  for(i = 0; i < CellPerLine; i++){
+    new_cell[i].splice(0,0,0);
+    new_cell[i].push(0);
+  }
+  
+  console.log("a");
+  new_cell.splice(0,0, new Array(CellPerLine+2).fill(0));
+  console.log("b");
+  new_cell.push(new Array(CellPerLine+2).fill(0));
+  console.log("c");
+  
+  return new_cell;
 }
 
 /*
  * セルの状態をcsv形式の文字列に変換する
  */
 function cellToCsv(cell){
+  console.log("cellToCsv")
+  var check1 = document.getElementById("EncloseZero");
+  var check2 = document.getElementById("NotEncloseZero");
+  
+  var n = check1.checked ? CellPerLine + 2 : CellPerLine;
   var csv = "";
-  for(i = 0; i < CellPerLine; i++){
-    for(j = 0; j < CellPerLine; j++){
+  for(i = 0; i < n; i++){
+    for(j = 0; j < n; j++){
       csv += cell[i][j];
-      if(j != CellPerLine - 1){
+      if(j != CellPerLine + 1){
         csv += ",";
       }
     }
