@@ -107,3 +107,33 @@ function onClearButtonClick(){
   DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 0.6");
   DrawLine(GridLength, CellPerLine, LengthPerCell);
 }
+
+function gameDownload(){
+  var blob = new Blob([cellToCsv(cell)], { "type" : "text/plain" });
+
+  if (window.navigator.msSaveBlob) { 
+    // window.navigator.msSaveBlob(blob, "cell.csv"); 
+    // msSaveOrOpenBlobの場合はファイルを保存せずに開ける
+    // window.navigator.msSaveOrOpenBlob(blob, "test.txt"); 
+  } else {
+    document.getElementById("download").href = window.URL.createObjectURL(blob);
+  }
+}
+
+/*
+ * セルの状態をcsv形式の文字列に変換する
+ */
+function cellToCsv(cell){
+  var csv = "";
+  for(i = 0; i < CellPerLine; i++){
+    for(j = 0; j < CellPerLine; j++){
+      csv += cell[i][j];
+      if(j != CellPerLine - 1){
+        csv += ",";
+      }
+    }
+    csv += "\n"
+  }
+  
+  return csv;
+}
