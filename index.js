@@ -96,3 +96,14 @@ window.onload = function() {
   DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 0.6");
   DrawLine(GridLength, CellPerLine, LengthPerCell);
 };
+
+
+function onClearButtonClick(){
+  console.log("onClearButtonClick");
+  for(i = 0; i < CellPerLine; i++){
+    cell[i].fill(0)
+  }
+  
+  DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 0.6");
+  DrawLine(GridLength, CellPerLine, LengthPerCell);
+}
