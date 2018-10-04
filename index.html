@@ -26,6 +26,11 @@
     </form>
     <a id="download" href="#" download="cell.csv" onclick="gameDownload()">ダウンロード</a>
     <input type="button" value="clear" onclick="onClearButtonClick();"/>
+    <p>ペンの種類</p>
+    <input id="AlivePen" name="RadioGroup1" type="radio" onchange="onRadioButtonChange();" checked="true"/>
+      <label for="Radio1">生存</label><br/>
+    <input id="DeadPen" name="RadioGroup1" type="radio" onchange="onRadioButtonChange();" />
+      <label for="Radio2">死滅</label><br />
     <canvas id="canvas" width="100" height="100"></canvas>
 </body>
 </html>

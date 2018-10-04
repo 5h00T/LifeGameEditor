@@ -5,6 +5,7 @@ var GridLength;
 var isMouseDown;
 var canvas;
 var context;
+var penStatus;
 
 function DrawCell(cell, CellPerLine, LengthPerCell, backColor, cellColor){
   context.fillStyle = backColor;
@@ -56,7 +57,7 @@ function OnMousemove(e) {
       var i = Math.floor(x / LengthPerCell);
       var j = Math.floor(y / LengthPerCell);
       
-      cell[j][i] = 1;
+      cell[j][i] = penStatus ? 1 : 0;
       
       DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 1");
       DrawLine(GridLength, CellPerLine, LengthPerCell);
@@ -92,6 +93,10 @@ function lifeGameInit(){
   
   DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 0.6");
   DrawLine(GridLength, CellPerLine, LengthPerCell);
+
+  check1 = document.getElementById("AlivePen");
+  check1.checked = true;
+  penStatus = true;
 }
 
 window.onload = function() {
@@ -117,9 +122,9 @@ function gameDownload(){
   var blob = new Blob([cellToCsv(cell)], { "type" : "text/plain" });
 
   if (window.navigator.msSaveBlob) { 
-    // window.navigator.msSaveBlob(blob, "cell.csv"); 
+    window.navigator.msSaveBlob(blob, "cell.csv"); 
     // msSaveOrOpenBlobの場合はファイルを保存せずに開ける
-    // window.navigator.msSaveOrOpenBlob(blob, "test.txt"); 
+    // window.navigator.msSaveOrOpenBlob(blob, "cell.csv"); 
   } else {
     document.getElementById("download").href = window.URL.createObjectURL(blob);
   }
@@ -151,4 +156,11 @@ function onCellNumButtonClick(){
   // console.log(typeof(value));
   CellPerLine = Number(value);
   lifeGameInit();
+}
+
+function onRadioButtonChange(){
+  check1 = document.getElementById("AlivePen");
+  check2 = document.getElementById("DeadPen");
+  
+  penStatus = check1.checked ? true : false;
 }
