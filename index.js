@@ -78,7 +78,7 @@ function lifeGameInit(initCell){
     delete cell;
     cell = new Array(CellPerLine);
     for(i = 0; i < CellPerLine; i++){
-      cell[i] = new Array(CellPerLine).fill(0)
+      cell[i] = new Array(CellPerLine).fill(0);
     }
   }
   
@@ -123,33 +123,21 @@ window.onload = function() {
         var reader = new FileReader();
         // ファイル読み込みに成功したときの処理
         reader.onload = function() {
-          cell = []
+          cell = [];
           //改行ごとに配列化
           var arr = reader.result.split('\n');
 
           //1次元配列を2次元配列に変換
           cell = [];
           for(i = 0; i < arr.length; i++){
-            //空白行が出てきた時点で終了
-            if(arr[i] == '') break;
-
-            //","ごとに配列化
             cell[i] = arr[i].split(',');
-  
-            for(j = 0; j < cell[i].length; j++){
-              //数字の場合は「"」を削除
-              if(cell[i][j].match(/\-?\d+(.\d+)?(e[\+\-]d+)?/)){
-                cell[i][j] = parseFloat(cell[i][j].replace('"', ''));
-              }
-            }
           }
-          console.log(typeof(cell));
           
           CellPerLine = cell.length;
           GridLength = CellPerLine * LengthPerCell;
           
           lifeGameInit(false);
-        }
+        };
         // ファイル読み込みを実行
         reader.readAsText(fileData);
     }
@@ -170,7 +158,7 @@ window.onload = function() {
 function onClearButtonClick(){
   console.log("onClearButtonClick");
   for(i = 0; i < CellPerLine; i++){
-    cell[i].fill(0)
+    cell[i].fill(0);
   }
   
   DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 0.6");
@@ -194,7 +182,7 @@ function gameDownload(){
 }
 
 function encloseZero(cell){
-  console.log("encloseZero")
+  console.log("encloseZero");
   var new_cell = JSON.parse(JSON.stringify(cell)); // 値を全てコピーする
   
   for(i = 0; i < CellPerLine; i++){
@@ -215,7 +203,7 @@ function encloseZero(cell){
  * セルの状態をcsv形式の文字列に変換する
  */
 function cellToCsv(cell){
-  console.log("cellToCsv")
+  console.log("cellToCsv");
   var check1 = document.getElementById("EncloseZero");
   var check2 = document.getElementById("NotEncloseZero");
   
@@ -228,7 +216,7 @@ function cellToCsv(cell){
         csv += ",";
       }
     }
-    csv += "\n"
+    csv += "\n";
   }
   
   return csv;
@@ -236,9 +224,8 @@ function cellToCsv(cell){
 
 
 function onCellNumButtonClick(){
-  var select = document.getElementById("CellNum");
-  var idx = select.selectedIndex;
-  var value = select.options[idx].value;
+  var CellNum = document.getElementById("CellNum");
+  var value = CellNum.value;
   // console.log(typeof(value));
   CellPerLine = Number(value);
   lifeGameInit(true);

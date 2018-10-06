@@ -14,18 +14,7 @@
   
   <form name="form1" action="">
       <p>一行当たりのセル数(変更するとリセットされます)</p>
-      <select id="CellNum">
-          <option value="10">10</option>
-          <option value="20">20</option>
-          <option value="30">30</option>
-          <option value="40">40</option>
-          <option value="50">50</option>
-          <option value="60">60</option>
-          <option value="70">70</option>
-          <option value="80">80</option>
-          <option value="90">90</option>
-          <option value="100">100</option>
-      </select>
+      <input type="number" id="CellNum"  name="CellNum" id="CellNum" value="10" max="200"/>
       <input type="button" value="変更" onclick="onCellNumButtonClick();" />
   </form>
   
@@ -41,9 +30,9 @@
   <canvas id="canvas" width="100" height="100"></canvas>
   
   <p>セルの周りを</p>
-  <input id="NotEncloseZero" name="RadioGroup2" type="radio" />
+  <input id="NotEncloseZero" name="RadioGroup2" type="radio" checked="true"/>
     <label for="Radio2">囲まない</label>
-  <input id="EncloseZero" name="RadioGroup2" type="radio" checked="true"/>
+  <input id="EncloseZero" name="RadioGroup2" type="radio" />
     <label for="Radio1">0で囲む</label><br>
     
   <a id="download" href="#" download="cell.csv" onclick="gameDownload();">ダウンロード</a>
