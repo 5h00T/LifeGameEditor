@@ -67,15 +67,19 @@ function OnMousemove(e) {
 
 
 function OnMousedown(e) {
+  console.log("OnMouseDown");
   isMouseDown = true;
 }
 
-function lifeGameInit(){
-  // 0埋めの二次元配列を生成
-  delete cell;
-  cell = new Array(CellPerLine);
-  for(i = 0; i < CellPerLine; i++){
-    cell[i] = new Array(CellPerLine).fill(0)
+function lifeGameInit(initCell){
+  
+  if(initCell){
+    // 0埋めの二次元配列を生成
+    delete cell;
+    cell = new Array(CellPerLine);
+    for(i = 0; i < CellPerLine; i++){
+      cell[i] = new Array(CellPerLine).fill(0)
+    }
   }
   
   canvas = document.getElementById("canvas");
@@ -99,12 +103,67 @@ function lifeGameInit(){
   penStatus = true;
 }
 
+
 window.onload = function() {
+  var file = document.getElementById('file');
+  // File APIに対応しているか確認
+  if(window.File && window.FileReader && window.FileList && window.Blob) {
+    function loadLocalCsv(e) {
+        // ファイル情報を取得
+        var fileData = e.target.files[0];
+        console.log(fileData); // 取得した内容の確認用
+ 
+        // CSVファイル以外は処理を止める
+        if(!fileData.name.match('.csv$')) {
+            alert('CSVファイルを選択してください');
+            return;
+        }
+        
+        // FileReaderオブジェクトを使ってファイル読み込み
+        var reader = new FileReader();
+        // ファイル読み込みに成功したときの処理
+        reader.onload = function() {
+          cell = []
+          //改行ごとに配列化
+          var arr = reader.result.split('\n');
+
+          //1次元配列を2次元配列に変換
+          cell = [];
+          for(i = 0; i < arr.length; i++){
+            //空白行が出てきた時点で終了
+            if(arr[i] == '') break;
+
+            //","ごとに配列化
+            cell[i] = arr[i].split(',');
   
+            for(j = 0; j < cell[i].length; j++){
+              //数字の場合は「"」を削除
+              if(cell[i][j].match(/\-?\d+(.\d+)?(e[\+\-]d+)?/)){
+                cell[i][j] = parseFloat(cell[i][j].replace('"', ''));
+              }
+            }
+          }
+          console.log(typeof(cell));
+          
+          CellPerLine = cell.length;
+          GridLength = CellPerLine * LengthPerCell;
+          
+          lifeGameInit(false);
+        }
+        // ファイル読み込みを実行
+        reader.readAsText(fileData);
+    }
+    file.addEventListener('change', loadLocalCsv, false);
+    
+  } else {
+    file.style.display = 'none';
+    alert("FIle APIに対応していないブラウザではファイルのアップロードは使えません");
+  }
+
   LengthPerCell = 10; // セル一つあたりの長さ
   CellPerLine = 10; // 一行当たりのセル数
   
-  lifeGameInit();
+  lifeGameInit(true);
 };
 
 
@@ -182,7 +241,7 @@ function onCellNumButtonClick(){
   var value = select.options[idx].value;
   // console.log(typeof(value));
   CellPerLine = Number(value);
-  lifeGameInit();
+  lifeGameInit(true);
 }
 
 function onRadioButtonChange(){
