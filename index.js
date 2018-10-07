@@ -6,16 +6,20 @@ var isMouseDown;
 var canvas;
 var context;
 var penStatus;
+var isStarted;
+var isStoped;
+var timerID;
 
 function DrawCell(cell, CellPerLine, LengthPerCell, backColor, cellColor){
   context.fillStyle = backColor;
   context.fillRect(0,0, canvas.width, canvas.height);
   
-  for(i = 0; i < CellPerLine; i++){
-    for(j = 0; j < CellPerLine; j++){
+  for(i = 1; i < CellPerLine + 1; i++){
+    for(j = 1; j < CellPerLine + 1; j++){
       if(cell[i][j] == 1){
+        // console.log(i,j);
         context.fillStyle = cellColor;
-        context.fillRect(j*LengthPerCell, i*LengthPerCell, LengthPerCell, LengthPerCell);
+        context.fillRect((j-1)*LengthPerCell, (i-1)*LengthPerCell, LengthPerCell, LengthPerCell);
       }
     }
   }
@@ -54,30 +58,33 @@ function OnMousemove(e) {
   var y = e.clientY -  e.target.getBoundingClientRect().top;
 
   if (isMouseDown){
-      var i = Math.floor(x / LengthPerCell);
-      var j = Math.floor(y / LengthPerCell);
+      var i = Math.floor(x / LengthPerCell)+1;
+      var j = Math.floor(y / LengthPerCell)+1;
       
       cell[j][i] = penStatus ? 1 : 0;
       
       DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 1");
       DrawLine(GridLength, CellPerLine, LengthPerCell);
-  }  
- 
+  }
 }
 
 
 function OnMousedown(e) {
+  console.log("OnMouseDown");
   isMouseDown = true;
 }
 
-function lifeGameInit(){
-  // 0埋めの二次元配列を生成
-  delete cell;
-  cell = new Array(CellPerLine);
-  for(i = 0; i < CellPerLine; i++){
-    cell[i] = new Array(CellPerLine).fill(0)
-  }
+function lifeGameInit(initCell){
   
+  if(initCell){
+    // 0埋めの二次元配列を生成
+    delete cell;
+    cell = new Array(CellPerLine + 2);
+    for(i = 0; i < CellPerLine + 2; i++){
+      cell[i] = new Array(CellPerLine + 2).fill(0);
+    }
+  }
+  console.log(cell.length);
   canvas = document.getElementById("canvas");
   context = canvas.getContext('2d');
   GridLength = LengthPerCell * CellPerLine;
@@ -99,19 +106,64 @@ function lifeGameInit(){
   penStatus = true;
 }
 
+
 window.onload = function() {
-  
+  var file = document.getElementById('file');
+  // File APIに対応しているか確認
+  if(window.File && window.FileReader && window.FileList && window.Blob) {
+    function loadLocalCsv(e) {
+        // ファイル情報を取得
+        var fileData = e.target.files[0];
+        console.log(fileData); // 取得した内容の確認用
+ 
+        // CSVファイル以外は処理を止める
+        if(!fileData.name.match('.csv$')) {
+            alert('CSVファイルを選択してください');
+            return;
+        }
+        
+        // FileReaderオブジェクトを使ってファイル読み込み
+        var reader = new FileReader();
+        // ファイル読み込みに成功したときの処理
+        reader.onload = function() {
+          cell = [];
+          //改行ごとに配列化
+          var arr = reader.result.split('\n');
+          console.log("arr:" + arr.length);
+          //1次元配列を2次元配列に変換
+          cell = [];
+          for(i = 0; i < arr.length; i++){
+            cell[i] = arr[i].split(',');
+          }
+          
+          CellPerLine = cell.length;
+          GridLength = CellPerLine * LengthPerCell;
+          console.log("CellPerLine:" + CellPerLine);
+          cell = encloseZero(cell);
+          
+          lifeGameInit(false);
+        };
+        // ファイル読み込みを実行
+        reader.readAsText(fileData);
+    }
+    file.addEventListener('change', loadLocalCsv, false);
+    
+  } else {
+    file.style.display = 'none';
+    alert("FIle APIに対応していないブラウザではファイルのアップロードは使えません");
+  }
+
   LengthPerCell = 10; // セル一つあたりの長さ
   CellPerLine = 10; // 一行当たりのセル数
   
-  lifeGameInit();
+  lifeGameInit(true);
 };
 
 
 function onClearButtonClick(){
   console.log("onClearButtonClick");
   for(i = 0; i < CellPerLine; i++){
-    cell[i].fill(0)
+    cell[i].fill(0);
   }
   
   DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 0.6");
@@ -123,7 +175,7 @@ function gameDownload(){
   var check2 = document.getElementById("NotEncloseZero");
   
   
-  var blob = new Blob([cellToCsv( check1.checked ? encloseZero(cell) : cell)], { "type" : "text/plain" });
+  var blob = new Blob([cellToCsv( check1.checked ? cell : openZero(cell))], { "type" : "text/plain" });
 
   if (window.navigator.msSaveBlob) { 
     window.navigator.msSaveBlob(blob, "cell.csv"); 
@@ -135,7 +187,7 @@ function gameDownload(){
 }
 
 function encloseZero(cell){
-  console.log("encloseZero")
+  console.log("encloseZero");
   var new_cell = JSON.parse(JSON.stringify(cell)); // 値を全てコピーする
   
   for(i = 0; i < CellPerLine; i++){
@@ -143,20 +195,37 @@ function encloseZero(cell){
     new_cell[i].push(0);
   }
   
-  console.log("a");
   new_cell.splice(0,0, new Array(CellPerLine+2).fill(0));
-  console.log("b");
   new_cell.push(new Array(CellPerLine+2).fill(0));
-  console.log("c");
   
   return new_cell;
 }
+
+
+/*
+ * cellの周りを消去
+ */
+function openZero(cell){
+  console.log("encloseZero");
+  var new_cell = JSON.parse(JSON.stringify(cell)); // 値を全てコピーする
+  
+  new_cell.shift();
+  new_cell.pop();
+  
+  for(i = 0; i < CellPerLine; i++){
+    new_cell[i].shift();
+    new_cell[i].pop();
+  }
+  
+  return new_cell;
+}
+
 
 /*
  * セルの状態をcsv形式の文字列に変換する
  */
 function cellToCsv(cell){
-  console.log("cellToCsv")
+  console.log("cellToCsv");
   var check1 = document.getElementById("EncloseZero");
   var check2 = document.getElementById("NotEncloseZero");
   
@@ -165,11 +234,13 @@ function cellToCsv(cell){
   for(i = 0; i < n; i++){
     for(j = 0; j < n; j++){
       csv += cell[i][j];
-      if(j != CellPerLine + 1){
+      if(j != n-1){
         csv += ",";
       }
     }
-    csv += "\n"
+    if(i != n-1){
+      csv += "\n";
+    }
   }
   
   return csv;
@@ -177,12 +248,11 @@ function cellToCsv(cell){
 
 
 function onCellNumButtonClick(){
-  var select = document.getElementById("CellNum");
-  var idx = select.selectedIndex;
-  var value = select.options[idx].value;
+  var CellNum = document.getElementById("CellNum");
+  var value = CellNum.value;
   // console.log(typeof(value));
   CellPerLine = Number(value);
-  lifeGameInit();
+  lifeGameInit(true);
 }
 
 function onRadioButtonChange(){
@@ -190,4 +260,57 @@ function onRadioButtonChange(){
   check2 = document.getElementById("DeadPen");
   
   penStatus = check1.checked ? true : false;
+}
+
+
+function onStartButtonClick(){
+  if(!isStarted){
+    isStarted = true;
+    // 定期的に実行する関数
+    Timer = function() {
+      cell = updateCellStatus(cell);
+      DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 0.6");
+      DrawLine(GridLength, CellPerLine, LengthPerCell);
+    };
+    
+    timerID = setInterval(Timer, 500);
+  }
+}
+
+
+function onStopButtonClick(){
+  isStarted = false;
+  clearInterval(timerID);
+}
+
+
+/*
+ * 世代を一つ進める
+ */
+function onStepButtonClick(){
+  cell = updateCellStatus(cell);
+  DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 0.6");
+  DrawLine(GridLength, CellPerLine, LengthPerCell);
+}
+
+
+function updateCellStatus(cell) {
+  var new_cell = JSON.parse(JSON.stringify(cell));
+  
+  for(i = 1; i < CellPerLine + 1; i++){
+    for(j = 1; j < CellPerLine + 1; j++){
+      var AliveCells = 0;
+      for(k = -1; k < 2; k++){
+        for(l = -1; l < 2; l++){
+          if(cell[i+k][j+l] == 1 && !(k == 0 && l == 0)){
+            AliveCells++;
+          }
+        }
+      }
+      if(AliveCells == 3 && cell[i][j] == false) new_cell[i][j] = 1;
+      else if(AliveCells <= 1 || AliveCells >= 4) new_cell[i][j] = 0;
+    }
+  }
+  
+  return new_cell;
 }
