@@ -272,23 +272,33 @@ function onStopButtonClick(){
 }
 
 
+/*
+ * 世代を一つ進める
+ */
 function onStepButtonClick(){
-  
+  cell = updateCellStatus(cell);
+  DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 0.6");
+  DrawLine(GridLength, CellPerLine, LengthPerCell);
 }
 
 
 function updateCellStatus(cell) {
-  var enclose_zero_cell = encloseZero(cell);
-  var new_cell = JSON.parse(JSON.stringify(enclose_zero_cell));
+  var new_cell = JSON.parse(JSON.stringify(cell));
   
   for(i = 1; i < CellPerLine + 1; i++){
     for(j = 1; j < CellPerLine + 1; j++){
       var AliveCells = 0;
       for(k = -1; k < 2; k++){
         for(l = -1; l < 2; l++){
-          
+          if(cell[i+k][j+l] == 1 && !(k == 0 && l == 0)){
+            AliveCells++;
+          }
         }
       }
+      if(AliveCells == 3 && cell[i][j] == false) new_cell[i][j] = 1;
+      else if(AliveCells <= 1 || AliveCells >= 4) new_cell[i][j] = 0;
     }
   }
+  
+  return new_cell;
 }
