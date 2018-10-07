@@ -6,16 +6,19 @@ var isMouseDown;
 var canvas;
 var context;
 var penStatus;
+var isStarted;
+var isStoped;
 
 function DrawCell(cell, CellPerLine, LengthPerCell, backColor, cellColor){
   context.fillStyle = backColor;
   context.fillRect(0,0, canvas.width, canvas.height);
   
-  for(i = 0; i < CellPerLine; i++){
-    for(j = 0; j < CellPerLine; j++){
+  for(i = 1; i < CellPerLine + 1; i++){
+    for(j = 1; j < CellPerLine + 1; j++){
       if(cell[i][j] == 1){
+        // console.log(i,j);
         context.fillStyle = cellColor;
-        context.fillRect(j*LengthPerCell, i*LengthPerCell, LengthPerCell, LengthPerCell);
+        context.fillRect((j-1)*LengthPerCell, (i-1)*LengthPerCell, LengthPerCell, LengthPerCell);
       }
     }
   }
@@ -54,15 +57,14 @@ function OnMousemove(e) {
   var y = e.clientY -  e.target.getBoundingClientRect().top;
 
   if (isMouseDown){
-      var i = Math.floor(x / LengthPerCell);
-      var j = Math.floor(y / LengthPerCell);
+      var i = Math.floor(x / LengthPerCell)+1;
+      var j = Math.floor(y / LengthPerCell)+1;
       
       cell[j][i] = penStatus ? 1 : 0;
       
       DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 1");
       DrawLine(GridLength, CellPerLine, LengthPerCell);
-  }  
- 
+  }
 }
 
 
@@ -76,12 +78,12 @@ function lifeGameInit(initCell){
   if(initCell){
     // 0埋めの二次元配列を生成
     delete cell;
-    cell = new Array(CellPerLine);
-    for(i = 0; i < CellPerLine; i++){
-      cell[i] = new Array(CellPerLine).fill(0);
+    cell = new Array(CellPerLine + 2);
+    for(i = 0; i < CellPerLine + 2; i++){
+      cell[i] = new Array(CellPerLine + 2).fill(0);
     }
   }
-  
+  console.log(cell.length);
   canvas = document.getElementById("canvas");
   context = canvas.getContext('2d');
   GridLength = LengthPerCell * CellPerLine;
@@ -126,7 +128,7 @@ window.onload = function() {
           cell = [];
           //改行ごとに配列化
           var arr = reader.result.split('\n');
-
+          console.log("arr:" + arr.length);
           //1次元配列を2次元配列に変換
           cell = [];
           for(i = 0; i < arr.length; i++){
@@ -135,6 +137,8 @@ window.onload = function() {
           
           CellPerLine = cell.length;
           GridLength = CellPerLine * LengthPerCell;
+          console.log("CellPerLine:" + CellPerLine);
+          cell = encloseZero(cell);
           
           lifeGameInit(false);
         };
@@ -170,7 +174,7 @@ function gameDownload(){
   var check2 = document.getElementById("NotEncloseZero");
   
   
-  var blob = new Blob([cellToCsv( check1.checked ? encloseZero(cell) : cell)], { "type" : "text/plain" });
+  var blob = new Blob([cellToCsv( check1.checked ? cell : openZero(cell))], { "type" : "text/plain" });
 
   if (window.navigator.msSaveBlob) { 
     window.navigator.msSaveBlob(blob, "cell.csv"); 
@@ -190,14 +194,31 @@ function encloseZero(cell){
     new_cell[i].push(0);
   }
   
-  console.log("a");
   new_cell.splice(0,0, new Array(CellPerLine+2).fill(0));
-  console.log("b");
   new_cell.push(new Array(CellPerLine+2).fill(0));
-  console.log("c");
   
   return new_cell;
 }
+
+
+/*
+ * cellの周りを消去
+ */
+function openZero(cell){
+  console.log("encloseZero");
+  var new_cell = JSON.parse(JSON.stringify(cell)); // 値を全てコピーする
+  
+  new_cell.shift();
+  new_cell.pop();
+  
+  for(i = 0; i < CellPerLine; i++){
+    new_cell[i].shift();
+    new_cell[i].pop();
+  }
+  
+  return new_cell;
+}
+
 
 /*
  * セルの状態をcsv形式の文字列に変換する
@@ -212,11 +233,13 @@ function cellToCsv(cell){
   for(i = 0; i < n; i++){
     for(j = 0; j < n; j++){
       csv += cell[i][j];
-      if(j != CellPerLine + 1){
+      if(j != n-1){
         csv += ",";
       }
     }
-    csv += "\n";
+    if(i != n-1){
+      csv += "\n";
+    }
   }
   
   return csv;
@@ -236,4 +259,36 @@ function onRadioButtonChange(){
   check2 = document.getElementById("DeadPen");
   
   penStatus = check1.checked ? true : false;
+}
+
+
+function onStartButtonClick(){
+  
+}
+
+
+function onStopButtonClick(){
+  
+}
+
+
+function onStepButtonClick(){
+  
+}
+
+
+function updateCellStatus(cell) {
+  var enclose_zero_cell = encloseZero(cell);
+  var new_cell = JSON.parse(JSON.stringify(enclose_zero_cell));
+  
+  for(i = 1; i < CellPerLine + 1; i++){
+    for(j = 1; j < CellPerLine + 1; j++){
+      var AliveCells = 0;
+      for(k = -1; k < 2; k++){
+        for(l = -1; l < 2; l++){
+          
+        }
+      }
+    }
+  }
 }
