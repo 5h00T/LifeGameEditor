@@ -247,10 +247,25 @@ function cellToCsv(cell){
 }
 
 
+function checkValue(value, minValue, maxValue){
+  console.log("ads");
+  if(value < minValue || value > maxValue){
+    console.log("saaa");
+    alert(value + "は" + minValue + "以上" + maxValue + "以下にしてください")
+    return false;
+  }
+  
+  return true;
+}
+
+
 function onCellNumButtonClick(){
   var CellNum = document.getElementById("CellNum");
   var value = CellNum.value;
-  // console.log(typeof(value));
+  if(!checkValue(value, 10, 200)){
+    return;
+  }
+  
   CellPerLine = Number(value);
   lifeGameInit(true);
 }
@@ -264,6 +279,11 @@ function onRadioButtonChange(){
 
 
 function onStartButtonClick(){
+  var updateSpeed = document.getElementById("UpdateSpeed");
+  if(!checkValue(updateSpeed.value, 50, 10000)){
+    return;
+  }
+  
   if(!isStarted){
     isStarted = true;
     // 定期的に実行する関数
@@ -273,7 +293,7 @@ function onStartButtonClick(){
       DrawLine(GridLength, CellPerLine, LengthPerCell);
     };
     
-    timerID = setInterval(Timer, 500);
+    timerID = setInterval(Timer,Number(updateSpeed.value));
   }
 }
 

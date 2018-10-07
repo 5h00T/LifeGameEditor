@@ -30,10 +30,12 @@
   <canvas id="canvas" width="100" height="100"></canvas>
   
   <p>世代進行</p>
+    <p>更新頻度 <input type="number"  name="UpdateSpeed" id="UpdateSpeed" value="50" min="50" max="10000"/>ms</p>
+
     <input type="button" value="start" onclick="onStartButtonClick();"/>
     <input type="button" value="stop" onclick="onStopButtonClick();"/>
     <input type="button" value="step" onclick="onStepButtonClick();"/>
-    
+
   <p>セルの周りを</p>
   <input id="NotEncloseZero" name="RadioGroup2" type="radio" checked="true"/>
     <label for="Radio2">囲まない</label>
