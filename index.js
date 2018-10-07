@@ -8,6 +8,7 @@ var context;
 var penStatus;
 var isStarted;
 var isStoped;
+var timerID;
 
 function DrawCell(cell, CellPerLine, LengthPerCell, backColor, cellColor){
   context.fillStyle = backColor;
@@ -263,12 +264,23 @@ function onRadioButtonChange(){
 
 
 function onStartButtonClick(){
-  
+  if(!isStarted){
+    isStarted = true;
+    // 定期的に実行する関数
+    Timer = function() {
+      cell = updateCellStatus(cell);
+      DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 0.6");
+      DrawLine(GridLength, CellPerLine, LengthPerCell);
+    };
+    
+    timerID = setInterval(Timer, 500);
+  }
 }
 
 
 function onStopButtonClick(){
-  
+  isStarted = false;
+  clearInterval(timerID);
 }
 
 
