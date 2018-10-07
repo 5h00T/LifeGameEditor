@@ -56,6 +56,9 @@ function OnMousemove(e) {
   // var y = e.clientY - canvas.offsetTop;
   var x = e.clientX -  e.target.getBoundingClientRect().left;
   var y = e.clientY -  e.target.getBoundingClientRect().top;
+  
+  if (x < 0) x = 0;
+  if (y < 0) y = 0;
 
   if (isMouseDown){
       var i = Math.floor(x / LengthPerCell)+1;
