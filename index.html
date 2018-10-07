@@ -35,7 +35,38 @@
     <input type="button" value="start" onclick="onStartButtonClick();"/>
     <input type="button" value="stop" onclick="onStopButtonClick();"/>
     <input type="button" value="step" onclick="onStepButtonClick();"/>
-
+    
+  <h2>セルの色</h2>
+  <table>
+    <tr>
+      <td>赤</td>
+      <td>緑</td>
+      <td>青</td>
+      <td>不透明度</td>
+    </tr>
+    <tr>
+      <td><input type="number" onchange="onCellColorChanged();" name="CellRed" id="CellRed" value="0" min="0" max="255"/></td>
+      <td><input type="number" onchange="onCellColorChanged();" name="CellGreen" id="CellGreen" value="255" min="0" max="255"/></td>
+      <td><input type="number" onchange="onCellColorChanged();" name="CellBlue" id="CellBlue" value="0" min="0" max="255"/></td>
+      <td><input type="number" onchange="onCellColorChanged();" name="CellAlpha" id="CellAlpha" value="255" min="0" max="255"/></td>
+    </tr>
+  </table>
+    
+  <h2>背景色</h2>
+  <table>
+    <tr>
+      <td>赤</td>
+      <td>緑</td>
+      <td>青</td>
+      <td>不透明度</td>
+    </tr>
+    <tr>
+      <td><input type="number" onchange="onBackColorChanged();" name="BackRed" id="BackRed" value="255" min="0" max="255"/></td>        <td><input type="number" onchange="onBackColorChanged();" name="BackGreen" id="BackGreen" value="255" min="0" max="255"/></td>
+      <td><input type="number" onchange="onBackColorChanged();" name="BackBlue" id="BackBlue" value="255" min="0" max="255"/></td>
+      <td><input type="number" onchange="onBackColorChanged();" name="BackAlpha" id="BackAlpha" value="255" min="0" max="255"/></td>
+    </tr>
+  </table>
+  
   <p>セルの周りを</p>
   <input id="NotEncloseZero" name="RadioGroup2" type="radio" checked="true"/>
     <label for="Radio2">囲まない</label>
