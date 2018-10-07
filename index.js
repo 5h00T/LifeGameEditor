@@ -9,16 +9,19 @@ var penStatus;
 var isStarted;
 var isStoped;
 var timerID;
+var cellColor;
+var backColor;
 
 function DrawCell(cell, CellPerLine, LengthPerCell, backColor, cellColor){
+  context.clearRect(0,0, canvas.width, canvas.height);
   context.fillStyle = backColor;
   context.fillRect(0,0, canvas.width, canvas.height);
   
+  context.fillStyle = cellColor;
   for(i = 1; i < CellPerLine + 1; i++){
     for(j = 1; j < CellPerLine + 1; j++){
       if(cell[i][j] == 1){
         // console.log(i,j);
-        context.fillStyle = cellColor;
         context.fillRect((j-1)*LengthPerCell, (i-1)*LengthPerCell, LengthPerCell, LengthPerCell);
       }
     }
@@ -52,8 +55,6 @@ function OnMouseup(e) {
 
 
 function OnMousemove(e) {
-  // var x = e.clientX - canvas.offsetLeft;
-  // var y = e.clientY - canvas.offsetTop;
   var x = e.clientX -  e.target.getBoundingClientRect().left;
   var y = e.clientY -  e.target.getBoundingClientRect().top;
 
@@ -63,7 +64,7 @@ function OnMousemove(e) {
       
       cell[j][i] = penStatus ? 1 : 0;
       
-      DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 1");
+      DrawCell(cell, CellPerLine, LengthPerCell, backColor, cellColor);
       DrawLine(GridLength, CellPerLine, LengthPerCell);
   }
 }
@@ -98,7 +99,10 @@ function lifeGameInit(initCell){
   console.log(canvas.width);
   console.log(canvas.height);
   
-  DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 0.6");
+  onCellColorChanged();
+  onBackColorChanged();
+  
+  DrawCell(cell, CellPerLine, LengthPerCell, backColor, cellColor);
   DrawLine(GridLength, CellPerLine, LengthPerCell);
 
   check1 = document.getElementById("AlivePen");
@@ -166,7 +170,7 @@ function onClearButtonClick(){
     cell[i].fill(0);
   }
   
-  DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 0.6");
+  DrawCell(cell, CellPerLine, LengthPerCell, backColor, cellColor);
   DrawLine(GridLength, CellPerLine, LengthPerCell);
 }
 
@@ -247,10 +251,24 @@ function cellToCsv(cell){
 }
 
 
+function checkValue(value, minValue, maxValue){
+  console.log("ads");
+  if(value < minValue || value > maxValue){
+    alert(value + "は" + minValue + "以上" + maxValue + "以下にしてください")
+    return false;
+  }
+  
+  return true;
+}
+
+
 function onCellNumButtonClick(){
   var CellNum = document.getElementById("CellNum");
   var value = CellNum.value;
-  // console.log(typeof(value));
+  if(!checkValue(value, 10, 200)){
+    return;
+  }
+  
   CellPerLine = Number(value);
   lifeGameInit(true);
 }
@@ -264,16 +282,21 @@ function onRadioButtonChange(){
 
 
 function onStartButtonClick(){
+  var updateSpeed = document.getElementById("UpdateSpeed");
+  if(!checkValue(updateSpeed.value, 50, 10000)){
+    return;
+  }
+  
   if(!isStarted){
     isStarted = true;
     // 定期的に実行する関数
     Timer = function() {
       cell = updateCellStatus(cell);
-      DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 0.6");
+      DrawCell(cell, CellPerLine, LengthPerCell, backColor, cellColor);
       DrawLine(GridLength, CellPerLine, LengthPerCell);
     };
     
-    timerID = setInterval(Timer, 500);
+    timerID = setInterval(Timer,Number(updateSpeed.value));
   }
 }
 
@@ -289,10 +312,13 @@ function onStopButtonClick(){
  */
 function onStepButtonClick(){
   cell = updateCellStatus(cell);
-  DrawCell(cell, CellPerLine, LengthPerCell, "rgba(255, 255, 255, 1)", "rgba(0, 255, 0, 0.6");
+  DrawCell(cell, CellPerLine, LengthPerCell, backColor, cellColor);
   DrawLine(GridLength, CellPerLine, LengthPerCell);
 }
 
+function makeRGBA(red,green,blue,alpha){
+  return "rgba(" + red + ',' + green + ',' + blue + ',' + alpha + ')';
+}
 
 function updateCellStatus(cell) {
   var new_cell = JSON.parse(JSON.stringify(cell));
@@ -313,4 +339,22 @@ function updateCellStatus(cell) {
   }
   
   return new_cell;
+}
+
+function onBackColorChanged(){
+  var red = document.getElementById("BackRed").value;
+  var green = document.getElementById("BackGreen").value;
+  var blue = document.getElementById("BackBlue").value;
+  var alpha = document.getElementById("BackAlpha").value;
+  
+  backColor = makeRGBA(red, green, blue, alpha/255);
+}
+
+function onCellColorChanged(){
+  var red = document.getElementById("CellRed").value;
+  var green = document.getElementById("CellGreen").value;
+  var blue = document.getElementById("CellBlue").value;
+  var alpha = document.getElementById("CellAlpha").value;
+  
+  cellColor = makeRGBA(red, green, blue, alpha/255);
 }
