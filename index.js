@@ -169,7 +169,7 @@ window.onload = function() {
 
 function onClearButtonClick(){
   console.log("onClearButtonClick");
-  for(i = 0; i < CellPerLine; i++){
+  for(i = 1; i < CellPerLine + 1; i++){
     cell[i].fill(0);
   }
   
