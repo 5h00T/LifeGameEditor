@@ -4,6 +4,9 @@
   <head>
     <meta charset="utf-8" />
     <title>LifeGameEditor</title>
+    <script type="text/javascript" src="LZWEncoder.js"></script>
+    <script type="text/javascript" src="NeuQuant.js"></script>
+    <script type="text/javascript" src="GIFEncoder.js"></script>
     <script src="index.js"></script>
 </head>
 <body>
@@ -67,6 +70,12 @@
     </tr>
   </table>
   
+  <p>再生したゲームをgifファイルにする</p>
+  <input id="gifDL" name="RadioGroup3" type="radio" checked="true"/>
+    <label for="Radio2">はい</label>
+  <input id="notgifDL" name="RadioGroup3" type="radio" />
+    <label for="Radio1">いいえ</label><br>
+
   <p>セルの周りを</p>
   <input id="NotEncloseZero" name="RadioGroup2" type="radio" checked="true"/>
     <label for="Radio2">囲まない</label>
@@ -74,6 +83,7 @@
     <label for="Radio1">0で囲む</label><br>
     
   <a id="download" href="#" download="cell.csv" onclick="gameDownload();">ダウンロード</a>
+
 </body>
 </body>
 </html>

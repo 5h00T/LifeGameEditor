@@ -11,6 +11,7 @@ var isStoped;
 var timerID;
 var cellColor;
 var backColor;
+var encoder;
 
 function DrawCell(cell, CellPerLine, LengthPerCell, backColor, cellColor){
   context.clearRect(0,0, canvas.width, canvas.height);
@@ -193,6 +194,7 @@ function gameDownload(){
   }
 }
 
+
 function encloseZero(cell){
   console.log("encloseZero");
   var new_cell = JSON.parse(JSON.stringify(cell)); // 値を全てコピーする
@@ -285,18 +287,33 @@ function onRadioButtonChange(){
 
 
 function onStartButtonClick(){
+  var check1 = document.getElementById("gifDL");
+  var check2 = document.getElementById("notgifDL");
+  var makegif = check1.checked ? true : false;
   var updateSpeed = document.getElementById("UpdateSpeed");
+  var gifDelay = updateSpeed.value;
+
   if(!checkValue(updateSpeed.value, 50, 10000)){
     return;
   }
   
   if(!isStarted){
     isStarted = true;
+    if(makegif){
+      encoder = new GIFEncoder();
+      encoder.setDelay(gifDelay); // サイト内の更新頻度と同じ
+      encoder.start(); // 記録を開始
+      encoder.addFrame(context); // 初期配置を追加
+    }
+
     // 定期的に実行する関数
     Timer = function() {
       cell = updateCellStatus(cell);
       DrawCell(cell, CellPerLine, LengthPerCell, backColor, cellColor);
       DrawLine(GridLength, CellPerLine, LengthPerCell);
+      if(encoder){
+        encoder.addFrame(context);
+      }
     };
     
     timerID = setInterval(Timer,Number(updateSpeed.value));
@@ -306,9 +323,34 @@ function onStartButtonClick(){
 
 function onStopButtonClick(){
   isStarted = false;
+  if(encoder){
+    encoder.finish();
+    downloadGIF(encoder)
+  }
   clearInterval(timerID);
 }
 
+
+function downloadGIF(encoder){
+  // バイナリデータの編集
+  var byteString = encoder.stream().getData();
+  var ab = new ArrayBuffer(byteString.length);
+  var ia = new Uint8Array(ab);
+  for (var i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+  
+  var blob = new Blob( [ab], {type: "image/gif" });
+  
+  // ファイルをダウンロードする
+  var element = document.createElement("a");
+  filename = "LifeGame.gif";
+  element.download = filename;
+  element.href = window.URL.createObjectURL(blob);
+  element.click();
+
+  encoder = null;
+}
 
 /*
  * 世代を一つ進める
